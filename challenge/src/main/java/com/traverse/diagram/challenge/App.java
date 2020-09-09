@@ -1,13 +1,16 @@
 package com.traverse.diagram.challenge;
 
-/**
- * Hello world!
- *
- */
+import java.io.IOException;
+
+import com.traverse.diagram.challenge.GetRequest;
+
 public class App 
 {
-    public static void main( String[] args )
+    public static void main( String[] args ) throws IOException
     {
-        System.out.println( "Hello World!" );
+    	
+    	GetRequest.sendGET();
+    	
+
     }
 }
