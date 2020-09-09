@@ -6,6 +6,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
 
+import org.camunda.bpm.engine.impl.util.json.JSONException;
+import org.camunda.bpm.engine.impl.util.json.JSONObject;
+
 
 public class GetRequest {
 	
@@ -18,13 +21,15 @@ public class GetRequest {
 		HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
 		connection.setRequestMethod("GET");
 		
+		
 		try {
 			
 			int responseCode = connection.getResponseCode();
 			System.out.println("GET Response Code :: " + responseCode);
 			
 			if (responseCode == HttpURLConnection.HTTP_OK) { // If connection is OK
-
+				
+				
 				BufferedReader in = new BufferedReader(new InputStreamReader(
 						connection.getInputStream()));
 				String inputLine;
@@ -38,7 +43,7 @@ public class GetRequest {
 				in.close();
 
 				// Print result and pass response
-				System.out.println(response.toString());
+				//System.out.println(response.toString());
 				
 				return response.toString();
 				
@@ -53,4 +58,23 @@ public class GetRequest {
 		}
 		return null;
 	}
+
+	public static JSONObject convertToJSON(String json) {
+		
+		try {
+		     JSONObject jsonObject = new JSONObject(json);
+		     
+		     return jsonObject;
+		     
+		} catch (JSONException err){
+			
+			System.out.println("The object gathered is not a JSON file");
+			return new JSONObject();
+		     
+		}
+
+	}
+
 }
+
+	
