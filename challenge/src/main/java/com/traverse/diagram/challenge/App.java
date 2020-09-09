@@ -9,7 +9,9 @@ public class App
     public static void main( String[] args ) throws IOException
     {
     	
-    	GetRequest.sendGET();
+    	String json = GetRequest.sendGET();
+    	
+    	
     	
 
     }

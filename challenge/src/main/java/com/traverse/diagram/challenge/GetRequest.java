@@ -9,9 +9,10 @@ import java.net.UnknownHostException;
 
 public class GetRequest {
 	
-	public static final String URL = "https://n35ro2ic4d.execute-api.eu-central-1.amazonaws.com/prod/engine-rest/process-definition/key/invoice/xml";
+	public static final String URL = "https://n35ro2ic4d.execute-api.eu-central"
+			+ "-1.amazonaws.com/prod/engine-rest/process-definition/key/invoice/xml";
 	
-	public static void sendGET() throws IOException {
+	public static String sendGET() throws IOException {
 		
 		URL obj = new URL(URL);
 		HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
@@ -22,7 +23,7 @@ public class GetRequest {
 			int responseCode = connection.getResponseCode();
 			System.out.println("GET Response Code :: " + responseCode);
 			
-			if (responseCode == HttpURLConnection.HTTP_OK) { // success
+			if (responseCode == HttpURLConnection.HTTP_OK) { // If connection is OK
 
 				BufferedReader in = new BufferedReader(new InputStreamReader(
 						connection.getInputStream()));
@@ -30,14 +31,17 @@ public class GetRequest {
 				StringBuffer response = new StringBuffer();
 
 				while ((inputLine = in.readLine()) != null) {
+					
 					response.append(inputLine);
 				}
 				
 				in.close();
 
-				// print result
-
+				// Print result and pass response
 				System.out.println(response.toString());
+				
+				return response.toString();
+				
 			} else {
 				System.out.println("GET request not worked");
 			}
@@ -47,5 +51,6 @@ public class GetRequest {
 			System.out.println("Wrong URL");
 			
 		}
+		return null;
 	}
 }
