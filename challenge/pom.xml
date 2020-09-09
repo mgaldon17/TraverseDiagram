@@ -21,5 +21,10 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    	<groupId>org.camunda.bpm</groupId>
+    	<artifactId>camunda-engine</artifactId>
+    	<version>7.9.0</version>
+    </dependency>
   </dependencies>
 </project>
