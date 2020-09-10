@@ -27,25 +27,30 @@ public class ModelParser {
 		
 		// get the source and target element
 
-		SequenceFlow sequenceFlow = (SequenceFlow) modelInstance.getModelElementById("sequenceFlow_180");
-
-		FlowNode source = sequenceFlow.getSource();
-		FlowNode target = sequenceFlow.getTarget();
+		SequenceFlow sequenceFlow = (SequenceFlow) modelInstance.getModelElementById("sequenceFlow_178");
 		
-		System.out.println("Source: " + source.getId() + "\nTarget: "  + target.getId() + "\n");
-		
-		//Get the following nodes
-
-		for(FlowNode node : getFlowingFlowNodes(target)) {
+		try {
 			
-			System.out.println("Next node: " + node.getId());
-			getFlowingFlowNodes(node);
+			FlowNode source = sequenceFlow.getSource();
+			FlowNode target = sequenceFlow.getTarget();
+			
+			
+			System.out.println("Source: " + source.getId());
+			
+			//Get the following nodes
+			System.out.println("Next node: "  + target.getId()); 
+
+			for(FlowNode node : getFlowingFlowNodes(target)) {
+				
+				System.out.println("Next node: " + node.getId());
+
+			}
+			
+		}catch(NullPointerException npe) {
+			System.out.println("The id the of the element does not exist");
 		}
-		
-		
-		
-		//System.out.println(getFlowingFlowNodes(target));
-		
+
+
 		
 	}
 	
