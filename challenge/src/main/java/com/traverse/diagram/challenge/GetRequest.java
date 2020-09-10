@@ -49,11 +49,13 @@ public class GetRequest {
 				
 			} else {
 				System.out.println("GET request not worked");
+				System.exit(-1);
 			}
 			
 		} catch (UnknownHostException uhe) {
 			
 			System.out.println("Wrong URL");
+			System.exit(-1);
 			
 		}
 		return null;

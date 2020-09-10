@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.model.bpmn.Bpmn;
@@ -16,46 +17,52 @@ import org.camunda.bpm.model.xml.instance.ModelElementInstance;
 import org.camunda.bpm.model.xml.type.ModelElementType;
 import org.camunda.commons.utils.IoUtil;
 
+import com.sun.glass.ui.CommonDialogs.Type;
+
 public class ModelParser {
 	
-	public void parse() throws IOException {
+	public final Collection <FlowNode> path = null ; 
+	public BpmnModelInstance parse() throws IOException {
 		
 		String xml = GetXml.getXml();
 		InputStream targetStream = new ByteArrayInputStream(xml.getBytes());
 
 		BpmnModelInstance modelInstance = Bpmn.readModelFromStream(targetStream);
-		
-		// get the source and target element
+		final FlowNode start_node = (FlowNode) modelInstance.getModelElementById("invoice_approved");
+		final FlowNode end_node = (FlowNode) modelInstance.getModelElementById("invoiceProcessed");
 
-		SequenceFlow sequenceFlow = (SequenceFlow) modelInstance.getModelElementById("sequenceFlow_178");
-		System.out.println(sequenceFlow.getSource().getName());
-		System.out.println(sequenceFlow.getTarget().getName());
+		System.out.println("Start node: " + start_node.getId());
+		find(start_node, end_node);
+		return modelInstance;
 		
-
+	}
+	
+	public void find(FlowNode start, FlowNode end) throws IOException {
+		
 		try {
-			
-			FlowNode source = sequenceFlow.getSource();
-			FlowNode target = sequenceFlow.getTarget();
-			
-			
-			System.out.println("Source: " + source.getId());
-			
-			//Get the following nodes
-			System.out.println("Next node: "  + target.getId()); 
 
-			for(FlowNode node : getFlowingFlowNodes(target)) {
+			Collection<FlowNode> list_nodes = getFlowingFlowNodes(start);
+			
+			for(FlowNode node : list_nodes) {
 				
-				System.out.println("Next node: " + node.getId());
+				if(list_nodes.contains(end)) {
+					
+					System.out.println("End node: " + node.getId() + "." + "\n\nEnd of path.");
+					//path.add(node);
 
+				}else{ 
+					
+					System.out.println("Next node: " + node.getId());
+					//Add possible paths here for the nodes
+					//find(node, end);
+					
+				}
 			}
 			
 		}catch(NullPointerException npe) {
-			System.out.println("The id the of the element does not exist");
+			//System.out.println("\nThe id the of the element does not exist");
 			System.exit(-1);
 		} 
-
-
-		
 	}
 	
 	public Collection<FlowNode> getFlowingFlowNodes(FlowNode node) {
