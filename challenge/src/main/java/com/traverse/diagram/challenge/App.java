@@ -12,7 +12,7 @@ public class App
     	//String xml = GetXml.getXml();
     	
     	//System.out.println(xml);
-    	ModelParser model = new ModelParser();
+    	ModelParser model = new ModelParser(); 
     	model.parse();
     	
 

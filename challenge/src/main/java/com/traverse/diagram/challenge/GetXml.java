@@ -15,7 +15,7 @@ public class GetXml {
 		
 		String xml = j.getString("bpmn20Xml");
 		
-		return xml;
+		return xml; 
 		
 		
 	}
