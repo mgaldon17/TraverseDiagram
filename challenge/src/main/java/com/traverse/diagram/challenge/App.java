@@ -9,9 +9,11 @@ public class App
     	
     	//String json = GetRequest.sendGET();
     	
-    	String xml = GetXml.getXml();
+    	//String xml = GetXml.getXml();
     	
-    	System.out.println(xml);
+    	//System.out.println(xml);
+    	ModelParser model = new ModelParser();
+    	model.parse();
     	
 
     }
