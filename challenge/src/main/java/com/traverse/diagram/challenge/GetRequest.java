@@ -25,7 +25,7 @@ public class GetRequest {
 		try {
 			
 			int responseCode = connection.getResponseCode();
-			System.out.println("GET Response Code :: " + responseCode);
+			//System.out.println("GET Response Code :: " + responseCode);
 			
 			if (responseCode == HttpURLConnection.HTTP_OK) { // If connection is OK
 				
