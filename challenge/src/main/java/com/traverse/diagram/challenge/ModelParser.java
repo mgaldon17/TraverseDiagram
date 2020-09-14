@@ -27,7 +27,8 @@ public class ModelParser {
 	public ArrayList<FlowNode> saved_nodes = new ArrayList<FlowNode>();
 	public ArrayList<FlowNode> start_end = new ArrayList<FlowNode>();
 	public ArrayList<FlowNode> double_node = new ArrayList<FlowNode>();
-
+	public ArrayList<FlowNode> blacklist = new ArrayList<FlowNode>();
+	
 	boolean singleNode = false;
 	
 	public BpmnModelInstance parse() throws IOException {
@@ -37,8 +38,8 @@ public class ModelParser {
 
 		BpmnModelInstance modelInstance = Bpmn.readModelFromStream(targetStream);
 		
-		final FlowNode start_node = (FlowNode) modelInstance.getModelElementById("approveInvoice");
-		final FlowNode end_node = (FlowNode) modelInstance.getModelElementById("ServiceTask_1");
+		final FlowNode start_node = (FlowNode) modelInstance.getModelElementById("reviewInvoice");
+		final FlowNode end_node = (FlowNode) modelInstance.getModelElementById("prepareBankTransfer");
 		
 		start_end.add(start_node);
 		start_end.add(end_node);
@@ -57,42 +58,31 @@ public class ModelParser {
 		
 	}
 	
-	public void checkIfEnd(FlowNode end, List<FlowNode> list) throws IOException {
+	
+	
+	public void checkIfEnd(FlowNode end, FlowNode node) throws IOException {
 		
-		if(list.contains(end)) {
+		if(node == end) {
 			
 			finish = true;
 			
 			System.out.println("\nEnd node reached: " + end.getId() + "." + "\n\n----End of path----\n");
 			
 			String s0 = ("The path from " + start_end.get(0).getId() + " to " + start_end.get(1).getId() + " is: ");
-			//s0 += start_end.get(0).getId() + ", ";
-			
-			
+		
+
 			for(int i = 0; i<saved_nodes.size(); i++) {
 				
 				s0 += saved_nodes.get(i).getId() + ", ";
 
 			}
 			
-			System.out.println(s0   + ".");
+			System.out.println(s0 + ".");
 			System.exit(-1);
 
-		}else {
-			
-			/*
-			if(list.size()>1) {
-				
-				for(int i = 0; i<double_node.size(); i++) {
-					find(double_node.get(i), end);
-				} 
-				
-			}
-			
-			finish = false;
-			*/
-			
-			find(list.get(0), end);
+		}else{
+
+			find(node, end);
 		}
 		
 	}
@@ -116,35 +106,30 @@ public class ModelParser {
 				System.out.println("Only 1 next node found: " + list_nodes.get(0).getId());
 				
 				save(list_nodes.get(0), true);
-
-				checkIfEnd(end, list_nodes);
+				
+				checkIfEnd(end, list_nodes.get(0));
 				
 				
 			}else{
 				
-				String s1 = "Several nodes were found: ";
+				NodeScanner scanner = new NodeScanner(list_nodes, end);
+				ArrayList<FlowNode> nodes = scanner.following;
 				
-				for(int i = 0; i<list_nodes.size(); i++) {
+				for(int i = 0; i<nodes.size(); i++) {
 					
-					save(list_nodes.get(i), false);
+					System.out.println(nodes.get(i).getId());
 
-					s1 += list_nodes.get(i).getId();
-					
-					if(i == list_nodes.size() -1) {
-						s1 += ".";
-					}else {
-						s1+= ", ";
-					}
-					
 				}
-
-				System.out.println(s1);
-				checkDoubleNode();
+				
+				if(nodes.size()==1) {
+					find(nodes.get(0), end);
+				}
+				
 				
 			}
 
 		}catch(NullPointerException npe) {
-			//System.out.println("\nThe id the of the element does not exist");
+			System.out.println("\nThe id the of the element does not exist");
 			System.exit(-1);
 		} 
 	}
@@ -162,21 +147,6 @@ public class ModelParser {
 		
 	}
 
-	public void checkDoubleNode() throws IOException {
-		
-		
-		for(int i = 0; i<double_node.size(); i++) {
-			
-			System.out.println("Checking node " + i + ": " + double_node.get(i).getId());
-			
-			//System.out.println(double_node.get(i).getId());
-			
-			checkIfEnd(start_end.get(1), double_node);
-
-			
-		}
-		
-	}
 
 	public List<FlowNode> getFlowingFlowNodes(FlowNode node) {
 		
