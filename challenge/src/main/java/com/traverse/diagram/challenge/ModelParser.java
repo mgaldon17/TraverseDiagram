@@ -3,6 +3,7 @@ package com.traverse.diagram.challenge;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -21,15 +22,12 @@ import org.camunda.commons.utils.IoUtil;
 import com.sun.glass.ui.CommonDialogs.Type;
 
 public class ModelParser {
-	boolean finish; 
-	public List<FlowNode> list;
-	public final Collection <FlowNode> path = null ; 
+	boolean finish;
 	public ArrayList<FlowNode> saved_nodes = new ArrayList<FlowNode>();
 	public ArrayList<FlowNode> start_end = new ArrayList<FlowNode>();
 	public ArrayList<FlowNode> double_node = new ArrayList<FlowNode>();
 	public ArrayList<FlowNode> blacklist = new ArrayList<FlowNode>();
 	
-	boolean singleNode = false;
 	
 	public BpmnModelInstance parse() throws IOException {
 		
@@ -38,8 +36,8 @@ public class ModelParser {
 
 		BpmnModelInstance modelInstance = Bpmn.readModelFromStream(targetStream);
 		
-		final FlowNode start_node = (FlowNode) modelInstance.getModelElementById("reviewInvoice");
-		final FlowNode end_node = (FlowNode) modelInstance.getModelElementById("prepareBankTransfer");
+		final FlowNode start_node = (FlowNode) modelInstance.getModelElementById("approveInvoice");
+		final FlowNode end_node = (FlowNode) modelInstance.getModelElementById("ServiceTask_1");
 		
 		start_end.add(start_node);
 		start_end.add(end_node);
@@ -51,20 +49,15 @@ public class ModelParser {
 			System.exit(-1);
 			
 		}
-		
 
 		find(start_node, end_node);
 		return modelInstance;
 		
 	}
 	
-	
-	
 	public void checkIfEnd(FlowNode end, FlowNode node) throws IOException {
 		
 		if(node == end) {
-			
-			finish = true;
 			
 			System.out.println("\nEnd node reached: " + end.getId() + "." + "\n\n----End of path----\n");
 			
@@ -76,12 +69,12 @@ public class ModelParser {
 				s0 += saved_nodes.get(i).getId() + ", ";
 
 			}
-			
+			finish = true;
 			System.out.println(s0 + ".");
 			System.exit(-1);
 
 		}else{
-
+			finish = false;
 			find(node, end);
 		}
 		
@@ -115,14 +108,23 @@ public class ModelParser {
 				NodeScanner scanner = new NodeScanner(list_nodes, end);
 				ArrayList<FlowNode> nodes = scanner.following;
 				
+				/*
 				for(int i = 0; i<nodes.size(); i++) {
 					
 					System.out.println(nodes.get(i).getId());
 
 				}
+				*/
 				
 				if(nodes.size()==1) {
 					find(nodes.get(0), end);
+					saved_nodes.add(nodes.get(0));
+					
+				}else{
+					
+					//find(end, nodes.get(1));
+					find(end, nodes.get(0));
+
 				}
 				
 				
@@ -133,7 +135,7 @@ public class ModelParser {
 			System.exit(-1);
 		} 
 	}
-	
+
 	public void save(FlowNode node_to_save, boolean singleNode) {
 		
 		if(singleNode) {

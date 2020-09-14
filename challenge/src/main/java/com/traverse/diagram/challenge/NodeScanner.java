@@ -19,7 +19,7 @@ public class NodeScanner {
 		
 		if(double_node.contains(end)) {
 			
-			System.out.println("Node found: " + double_node.get(1).getId());
+			System.out.println("End node found: " + double_node.get(1).getId());
 		}else {
 			
 			scan(double_node, end);
@@ -50,7 +50,7 @@ public class NodeScanner {
 			return following;
 		}
 		if(!following0.isEmpty() && !following1.isEmpty()) {
-			System.out.println("Both " + double_node.get(0).getId() + " and " + 
+			System.out.println("Both " + double_node.get(1).getId() + " and " + 
 					double_node.get(0).getId());
 			
 			following.add(following1.get(0));
