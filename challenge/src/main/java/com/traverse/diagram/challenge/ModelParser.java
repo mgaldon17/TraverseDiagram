@@ -23,13 +23,14 @@ import org.camunda.commons.utils.IoUtil;
 import com.sun.glass.ui.CommonDialogs.Type;
 
 public class ModelParser {
+	
 	boolean finish;
-	public ArrayList<FlowNode> saved_nodes = new ArrayList<FlowNode>();
+
 	public ArrayList<FlowNode> start_end = new ArrayList<FlowNode>();
 	public final ArrayList<FlowNode> double_node = new ArrayList<FlowNode>();
 	public ArrayList<FlowNode> blacklist = new ArrayList<FlowNode>();
 	public boolean endReached = false;
-	Stack stack = new Stack();
+	Stack<FlowNode> stack = new Stack<FlowNode>();
 	
 	public BpmnModelInstance parse(String start, String end) throws IOException {
 		
@@ -45,16 +46,13 @@ public class ModelParser {
 		start_end.add(end_node);
 		
 		try {
-			System.out.println("Start node: " + start_node.getId() + "\n");
+			start_node.getId();
 		} catch (NullPointerException npe) {
 			System.out.println("Start node not found");
 			System.exit(-1);
-			
 		}
-
 		find(start_node, end_node);
 		return modelInstance;
-		
 	}
 	
 	public void printPath() {
@@ -63,7 +61,12 @@ public class ModelParser {
 		
 		while(!stack.empty()) {
 			
-			result+=stack.pop();
+			result+=stack.pop().getId();
+			if (stack.empty()) {
+				
+			}else {
+				result += ", ";
+			}
 		}
 		
 		result+="]";
@@ -75,109 +78,81 @@ public class ModelParser {
 	public boolean checkIfEnd(FlowNode end, FlowNode node) throws IOException {
 		
 		if(node == end) {
-			
-			finish = true;
-			System.out.println("\nEnd node reached: " + end.getId() + "." + "\n\n----End of path----\n");
-			
-			String s0 = ("The path from " + start_end.get(0).getId() + " to " + start_end.get(1).getId() + " is: ");
-		
-
-			for(int i = 0; i<saved_nodes.size(); i++) {
-				
-				s0 += saved_nodes.get(i).getId() + ", ";
-
-			}
-			finish = true;
-			System.out.println(s0 + ".");
+			stack.push(end);
+			printPath();
 			System.exit(-1);
-			return true;
+			return finish = true;
 
 		}else{
-			finish = false;
-			return finish;
+			
+
+			return finish = false;
 		}
 	}
 	
 	public void find(FlowNode start, FlowNode end) throws IOException {
 		
 		try {
-			if(!saved_nodes.contains(start)) {
-				saved_nodes.add(start);
+			if(!stack.contains(start)) {
+				stack.add(start);
 			}
 			
-			List<FlowNode> list_nodes = getFlowingFlowNodes(start); //Get all nodes
-			
-			if (list_nodes.isEmpty()) {
+			List<FlowNode> following = getFlowingFlowNodes(start); //Get all nodes
+			//System.out.println(following.get(0).getId());
+			if (following.isEmpty()) {
 				System.out.println("Reached the end. Path not found");
 				endReached = true;
 			}
 			
 			//Save next nodes in the list
-			if(list_nodes.size() == 1) {
+			if(following.size() == 1 && !checkIfEnd(end, following.get(0))) { //Only 1 following node and not the end
 				
-				System.out.println("Only 1 next node found: " + list_nodes.get(0).getId());
 				
-				save(list_nodes.get(0), true);
+				System.out.println("Only 1 next node found: " + following.get(0).getId());
+				stack.push(following.get(0));
+				find(following.get(0), end);
 				
-				while(!checkIfEnd(end, list_nodes.get(0))) {
+			}else if (following.size() == 1 && checkIfEnd(end, following.get(0))){ //Only 1 following node and  the end
+				
+				//End
+				
+			}else if(following.size() > 1 && checkIfEnd(end, following.get(0))){ //Several following node and the end
 					
-					find(list_nodes.get(0), end);
-				}
+			
+			}else if(following.size() != 1 && !checkIfEnd(end, following.get(0))) { //Several following nodes and not the end
 				
-			}else{
-				if(list_nodes.size()==1) {
-					find(list_nodes.get(0), end);
-					saved_nodes.add(list_nodes.get(0));
-					
-				}else{ 
-					///Tomar el nodo 1 y mandarlo a find. Si no encuentra el path, tomar el nodo 2
-
-					if(!finish) {
-						
-						scanPath(list_nodes);
-
-					}
-				}
+				System.out.println(following.get(1).getId());
+				scanPath(following);
+				
 			}
-
+			
+		
 		}catch(NullPointerException npe) {
-			System.out.println("\nThe id the of the element does not exist");
-			System.exit(-1);
+
+				System.out.println("\nThe id the of the element does not exist");
+				System.exit(-1);
 		} 
 	}
 	
-	public void scanPath(List<FlowNode> list_nodes) throws IOException {
+	public void scanPath(List<FlowNode> following) throws IOException {
 		
-		List<FlowNode> path1 = getFlowingFlowNodes(list_nodes.get(0));
-		List<FlowNode> path2 = getFlowingFlowNodes(list_nodes.get(1));
+		
+		List<FlowNode> path1 = getFlowingFlowNodes(following.get(0));
+		List<FlowNode> path2 = getFlowingFlowNodes(following.get(1));
 		FlowNode end = start_end.get(1);
 		
-		/*
-		System.out.println("List nodes");
-		for(int i = 0; i<path1.size(); i++) {
-			
-			System.out.println(path1.get(i).getId());
-
-		}*/
-		//find(path1.get(0), end);
-		if(endReached = true) {
-			path1.clear();
-		}
 		
-		find(path2.get(0), end);
-		if(endReached = true) {
-			path2.clear();
-		}
+		//System.out.println(following.get(0).getId() + "--------> " + path1.get(0).getId());
+		//System.out.println(following.get(1).getId() + "--------> " + path2.get(0).getId());
+		
+		
+		
+		//Path2
+		
+		find(following.get(0), end);
+		
 	}
 
-	public void save(FlowNode node_to_save, boolean singleNode) {
-		
-		if(singleNode) {
-			saved_nodes.add(node_to_save);
-		}else{
-			double_node.add(node_to_save);
-		}
-	}
 
 	public List<FlowNode> getFlowingFlowNodes(FlowNode node) {
 		
