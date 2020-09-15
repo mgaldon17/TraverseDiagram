@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.model.bpmn.Bpmn;
@@ -28,6 +29,7 @@ public class ModelParser {
 	public final ArrayList<FlowNode> double_node = new ArrayList<FlowNode>();
 	public ArrayList<FlowNode> blacklist = new ArrayList<FlowNode>();
 	public boolean endReached = false;
+	Stack stack = new Stack();
 	
 	public BpmnModelInstance parse(String start, String end) throws IOException {
 		
@@ -52,6 +54,21 @@ public class ModelParser {
 
 		find(start_node, end_node);
 		return modelInstance;
+		
+	}
+	
+	public void printPath() {
+		
+		String result = "The path from " + start_end.get(0).getId() + " and " + start_end.get(1).getId() +" is: [";
+		
+		while(!stack.empty()) {
+			
+			result+=stack.pop();
+		}
+		
+		result+="]";
+		
+		System.out.println(result);
 		
 	}
 	
