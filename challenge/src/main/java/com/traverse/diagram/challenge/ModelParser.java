@@ -111,7 +111,7 @@ public class ModelParser {
 			if(following.size() == 1 && !checkIfEnd(end, following.get(0))) { //Only 1 following node and not the end
 				
 				
-				System.out.println("Only 1 next node found: " + following.get(0).getId());
+				//System.out.println("Only 1 next node found: " + following.get(0).getId());
 				stack.push(following.get(0));
 				
 				find(following.get(0), end);
@@ -143,18 +143,25 @@ public class ModelParser {
 		
 		
 		if(following.get(0).getId().equals("reviewInvoice") && !checkIfEnd(end, following.get(0)) && cout !=0) {
-			System.out.println("Siguiente review successful");
+			//System.out.println("Next: review successful");
 			cout++;
+			checkIfEnd(end, following.get(0));
 			find(following.get(0), end);
+			
 		}else if(following.get(1).getId().equals("prepareBankTransfer")&& !checkIfEnd(end, following.get(0))) {
-			System.out.println("Siguiente service task 1");
+			//System.out.println("Next: service task 1");
+			checkIfEnd(end, following.get(1));
 			find(following.get(1), end);
+			
 		}else if(following.get(0).getId().equals("reviewSuccessful_gw")&& !checkIfEnd(end, following.get(0)) && cout2!=0) {
-			System.out.println("Siguiente invoice processed");
+			//System.out.println("Next: invoice processed");
 			cout2++;
+			checkIfEnd(end, following.get(0));
 			find(following.get(0), end);
+			
 		}else if(following.get(1).getId().equals("approveInvoice")&& !checkIfEnd(end, following.get(0))) {
-			System.out.println("Siguiente invoice approved");
+			//System.out.println("Next: invoice approved");
+			checkIfEnd(end, following.get(1));
 			find(following.get(1), end);
 			
 		}
