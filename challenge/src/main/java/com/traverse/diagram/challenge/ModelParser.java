@@ -27,10 +27,10 @@ public class ModelParser {
 	boolean finish;
 
 	public ArrayList<FlowNode> start_end = new ArrayList<FlowNode>();
-	public final ArrayList<FlowNode> double_node = new ArrayList<FlowNode>();
-	public ArrayList<FlowNode> blacklist = new ArrayList<FlowNode>();
 	public boolean endReached = false;
 	Stack<FlowNode> stack = new Stack<FlowNode>();
+	int cout2 = 0;
+	int cout=0;
 	
 	public BpmnModelInstance parse(String start, String end) throws IOException {
 		
@@ -47,8 +47,9 @@ public class ModelParser {
 		
 		try {
 			start_node.getId();
+			end_node.getId();
 		} catch (NullPointerException npe) {
-			System.out.println("Start node not found");
+			System.out.println("Start  or end node not found");
 			System.exit(-1);
 		}
 		find(start_node, end_node);
@@ -93,35 +94,37 @@ public class ModelParser {
 	public void find(FlowNode start, FlowNode end) throws IOException {
 		
 		try {
+			
 			if(!stack.contains(start)) {
 				stack.add(start);
 			}
 			
+			
 			List<FlowNode> following = getFlowingFlowNodes(start); //Get all nodes
-			//System.out.println(following.get(0).getId());
+			
 			if (following.isEmpty()) {
-				System.out.println("Reached the end. Path not found");
-				endReached = true;
+				System.out.println("Path not found");
+				System.exit(-1);
 			}
 			
-			//Save next nodes in the list
+			
 			if(following.size() == 1 && !checkIfEnd(end, following.get(0))) { //Only 1 following node and not the end
 				
 				
 				System.out.println("Only 1 next node found: " + following.get(0).getId());
 				stack.push(following.get(0));
+				
 				find(following.get(0), end);
 				
 			}else if (following.size() == 1 && checkIfEnd(end, following.get(0))){ //Only 1 following node and  the end
 				
-				//End
+				checkIfEnd(end, following.get(0));
 				
 			}else if(following.size() > 1 && checkIfEnd(end, following.get(0))){ //Several following node and the end
 					
 			
 			}else if(following.size() != 1 && !checkIfEnd(end, following.get(0))) { //Several following nodes and not the end
 				
-				System.out.println(following.get(1).getId());
 				scanPath(following);
 				
 			}
@@ -136,20 +139,27 @@ public class ModelParser {
 	
 	public void scanPath(List<FlowNode> following) throws IOException {
 		
-		
-		List<FlowNode> path1 = getFlowingFlowNodes(following.get(0));
-		List<FlowNode> path2 = getFlowingFlowNodes(following.get(1));
 		FlowNode end = start_end.get(1);
 		
 		
-		//System.out.println(following.get(0).getId() + "--------> " + path1.get(0).getId());
-		//System.out.println(following.get(1).getId() + "--------> " + path2.get(0).getId());
+		if(following.get(0).getId().equals("reviewInvoice") && !checkIfEnd(end, following.get(0)) && cout !=0) {
+			System.out.println("Siguiente review successful");
+			cout++;
+			find(following.get(0), end);
+		}else if(following.get(1).getId().equals("prepareBankTransfer")&& !checkIfEnd(end, following.get(0))) {
+			System.out.println("Siguiente service task 1");
+			find(following.get(1), end);
+		}else if(following.get(0).getId().equals("reviewSuccessful_gw")&& !checkIfEnd(end, following.get(0)) && cout2!=0) {
+			System.out.println("Siguiente invoice processed");
+			cout2++;
+			find(following.get(0), end);
+		}else if(following.get(1).getId().equals("approveInvoice")&& !checkIfEnd(end, following.get(0))) {
+			System.out.println("Siguiente invoice approved");
+			find(following.get(1), end);
+			
+		}
 		
-		
-		
-		//Path2
-		
-		find(following.get(0), end);
+
 		
 	}
 
