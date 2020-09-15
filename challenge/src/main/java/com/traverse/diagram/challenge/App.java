@@ -8,6 +8,9 @@ public class App
     {
     	
 
+        System.out.println("Argument one = "+ args[0]);
+        System.out.println("Argument two = "+ args[1]);
+
     	ModelParser model = new ModelParser(); 
     	model.parse();
     	

@@ -29,15 +29,15 @@ public class ModelParser {
 	public ArrayList<FlowNode> blacklist = new ArrayList<FlowNode>();
 	public boolean endReached = false;
 	
-	public BpmnModelInstance parse() throws IOException {
+	public BpmnModelInstance parse(String start, String end) throws IOException {
 		
 		String xml = GetXml.getXml();
 		InputStream targetStream = new ByteArrayInputStream(xml.getBytes());
 
 		BpmnModelInstance modelInstance = Bpmn.readModelFromStream(targetStream);
 		
-		final FlowNode start_node = (FlowNode) modelInstance.getModelElementById("approveInvoice");
-		final FlowNode end_node = (FlowNode) modelInstance.getModelElementById("invoiceProcessed");
+		final FlowNode start_node = (FlowNode) modelInstance.getModelElementById(start);
+		final FlowNode end_node = (FlowNode) modelInstance.getModelElementById(end);
 		
 		start_end.add(start_node);
 		start_end.add(end_node);
