@@ -98,8 +98,7 @@ public class ModelParser {
 			if(!stack.contains(start)) {
 				stack.add(start);
 			}
-			
-			
+
 			List<FlowNode> following = getFlowingFlowNodes(start); //Get all nodes
 			
 			if (following.isEmpty()) {
@@ -109,7 +108,6 @@ public class ModelParser {
 			
 			
 			if(following.size() == 1 && !checkIfEnd(end, following.get(0))) { //Only 1 following node and not the end
-				
 				
 				//System.out.println("Only 1 next node found: " + following.get(0).getId());
 				stack.push(following.get(0));
@@ -121,7 +119,8 @@ public class ModelParser {
 				checkIfEnd(end, following.get(0));
 				
 			}else if(following.size() > 1 && checkIfEnd(end, following.get(0))){ //Several following node and the end
-					
+				
+				checkIfEnd(end, following.get(0));
 			
 			}else if(following.size() != 1 && !checkIfEnd(end, following.get(0))) { //Several following nodes and not the end
 				
