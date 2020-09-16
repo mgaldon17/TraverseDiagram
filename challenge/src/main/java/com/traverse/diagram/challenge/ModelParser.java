@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
@@ -49,14 +50,24 @@ public class ModelParser {
 	public void printPath() {
 		
 		String result = "The path from " + start_end.get(0).getId() + " and " + start_end.get(1).getId() +" is: [";
+		ArrayList <String> result_list = new ArrayList<String>();
 		
 		while(!stack.empty()) {
+
+			result_list.add(stack.pop().getId());
 			
-			result+=stack.pop().getId();
-			if (stack.empty()) {
-				
-			}else {
+		}
+		
+		Collections.reverse(result_list);
+		
+		for(int i=0; i<result_list.size(); i++) {
+			
+			result += result_list.get(i);
+			
+			if (i<result_list.size()-1) {
 				result += ", ";
+			}else {
+				
 			}
 		}
 		

@@ -2,7 +2,7 @@ package com.traverse.diagram.challenge;
 
 import java.io.IOException;
 
-public class Main {
+public class TraverseDiagram {
 	
 	public static void main( String[] args ) throws IOException
     {
