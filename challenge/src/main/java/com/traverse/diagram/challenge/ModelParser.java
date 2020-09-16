@@ -3,24 +3,14 @@ package com.traverse.diagram.challenge;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.model.bpmn.Bpmn;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.camunda.bpm.model.bpmn.instance.FlowNode;
 import org.camunda.bpm.model.bpmn.instance.SequenceFlow;
-import org.camunda.bpm.model.bpmn.instance.StartEvent;
-import org.camunda.bpm.model.xml.instance.ModelElementInstance;
-import org.camunda.bpm.model.xml.type.ModelElementType;
-import org.camunda.commons.utils.IoUtil;
-
-import com.sun.glass.ui.CommonDialogs.Type;
 
 public class ModelParser {
 	
@@ -109,7 +99,7 @@ public class ModelParser {
 			
 			if(following.size() == 1 && !checkIfEnd(end, following.get(0))) { //Only 1 following node and not the end
 				
-				//System.out.println("Only 1 next node found: " + following.get(0).getId());
+				
 				stack.push(following.get(0));
 				
 				find(following.get(0), end);
@@ -163,12 +153,8 @@ public class ModelParser {
 			checkIfEnd(end, following.get(1));
 			find(following.get(1), end);
 			
-		}
-		
-
-		
+		}		
 	}
-
 
 	public List<FlowNode> getFlowingFlowNodes(FlowNode node) {
 		
@@ -180,8 +166,5 @@ public class ModelParser {
 
 		return followingFlowNodes;
 	}
-
-
-	
 
 }
