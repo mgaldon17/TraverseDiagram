@@ -25,7 +25,7 @@ public class GetRequest {
 		try {
 			
 			int responseCode = connection.getResponseCode();
-			//System.out.println("GET Response Code :: " + responseCode);
+			
 			
 			if (responseCode == HttpURLConnection.HTTP_OK) { // If connection is OK
 				
@@ -41,9 +41,6 @@ public class GetRequest {
 				}
 				
 				in.close();
-
-				// Print result and pass response
-				//System.out.println(response.toString());
 				
 				return response.toString();
 				
